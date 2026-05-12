@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starbucks Menü | Kahve Deneyimi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --sb-green: #00704A; --sb-dark: #1E3932; --sb-light: #f7f7f7; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--sb-light); }
+        
+        header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo { color: var(--sb-green); font-weight: 800; font-size: 1.5rem; text-decoration: none; }
+        
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
+        
+        .card { background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .card:hover { transform: translateY(-10px); }
+        .card img { width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px; border-radius: 10px; }
+        .card h3 { font-size: 1.1rem; color: var(--sb-dark); margin: 10px 0; }
+        .price { color: var(--sb-green); font-weight: 600; font-size: 1.2rem; }
+
+        .about { background: var(--sb-dark); color: white; padding: 60px 10%; margin-top: 50px; text-align: center; }
+        .about h2 { color: #d4e9e2; margin-bottom: 20px; }
+        .about p { line-height: 1.8; max-width: 800px; margin: 0 auto; }
+        footer { text-align: center; padding: 20px; color: #888; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="logo">KAHVECİ ENGİN</a>
+    <nav><a href="#menu" style="text-decoration:none; color:var(--sb-dark);">Menü</a></nav>
+</header>
+
+<div class="container" id="menu">
+    <h2 style="text-align:center; color:var(--sb-dark); margin-bottom:40px;">Kahve Menümüz</h2>
+    <div class="grid" id="menu-grid"></div>
+</div>
+
+<section class="about">
+    <h2>Hakkımızda</h2>
+    <p>1971'den beri her bardakta en yüksek kaliteyi sunmak için çalışıyoruz. Sadece kahve değil, bir kültür inşa ediyoruz. Etik ticaret ilkelerimizle dünyanın en iyi çekirdeklerini sizinle buluşturuyoruz.</p>
+</section>
+
+<footer>&copy; 2026 Starbucks Web Tasarım Ödevi.</footer>
+
+<script>
+const products = [
+    { n: "Caffè Latte", p: "95 TL", i: "https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcTh7NQJHssueHslM4eHrDAQNobOMxFNhfSDJsGiE9g_cBNSnCIWQ-wbv0xF2qwUcf-8fBfuUhE4WvdSRIs" },
+    { n: "Caramel Macchiato", p: "115 TL", i: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQ8FU7_3Sp8QifSTRIaz-Y8AV8HKx1Uii7XGvDX4JqN_ME2MELGFWLPfy3iO-mOq00rlEE0a3wCAg7HKJQ" },
+    { n: "White Chocolate Mocha", p: "125 TL", i: "https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcRWE0woOmJs2zGje-uTilcP1QIig2hdZ9xv6_wU6r1-NqVUwqptF7Jq_WCqK9mcVEOGXN_TjL2HtFfSGSA" },
+    { n: "Caffè Americano", p: "85 TL", i: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcTmGtAjL17BEhTwNrtFob-lZ8rlgy97Ob0MB0oN5bp3D08tV1tSUqwu1GwkfiUQ8rNCv2QA_KcT82pKkas" },
+    { n: "Cappuccino", p: "95 TL", i: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcRsgpHUccFkmIjijd8Z4GCElGJCK3NSdCKaSYvssReHKQy_OOiM5lFW2OfXo2179UpfjxOE7pywk_zgOHk" },
+    { n: "Java Chip Frappuccino", p: "135 TL", i: "https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcSeVOUzjgy1lA0dgc5DGinkXVr3sy_HLMIwZE3IGWKU2LGz0xrUYgY2pGoJTlNydy16fvS7rT5qYajqIfE" },
+    { n: "Caramel Frappuccino", p: "130 TL", i: "https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcQjEdI2hcHnkH4jUDUkVvzm6lUV_NL9eTiYMzPVi7t-zDNtqvfInomI2B1SlHn_CNmMraevKxjLZzorX4E" },
+    { n: "Cold Brew", p: "110 TL", i: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcQ5OiO3RbZcZmtvAWtIWamtEzBdWMS1Dy5x2zm_qGpNOuU6YlQhfCD4p44GuDwBl0E-khmTpVbQIXqjGAk" },
+    { n: "Brown Sugar Oat Espresso", p: "140 TL", i: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcSeICfrSh736BzC1QvlwB8Btqi9Gy79Nf3loh7eWDKGIdr5AuyhICZzgrt64ljazxskPlzpQlvFkegZBeQ" },
+    { n: "Pumpkin Spice Latte", p: "145 TL", i: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcT-QXOERN0ecFuK_oyumlBu8GJMQaq9xaEwWWr_xtUjpk2WogTFPPfiKM6p-6SIv73nkscO4GSABUThTzU" },
+    { n: "Flat White", p: "105 TL", i: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcTBBuF1j2Iz1RgQKRu8OsHPy18rH9Ww-16VuHN_VKLEkDDYV99MGEDvdr8YvgGuRyo9q0hcESkt_pn3hB0" },
+    { n: "Iced White Mocha", p: "130 TL", i: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcTR4ziXB_220wUPXLJvQ5Y2JfyvoLcPYdjXK17PJWq8keLhg0z9HScpXlwD5PKN_IBL51x8o2FAXypWAYU" },
+    { n: "Espresso Shot", p: "65 TL", i: "https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcQi2xy_6ahEWstEM_d5d-D8DL0QQ6Ri2loo0W3Xst9DIyOjfFw9lxzOW1LzU1BIW2D4ghu2Jx0tyxRCnGE" },
+    { n: "Türk Kahvesi", p: "75 TL", i: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcRLKzsozxOQU0vr3SV7rRQV1a2fy52nWO1wWiCW5-IO-_uJKBdrL_auKFpiGhHDPa-3HhPkQZAIwxg9904" },
+    { n: "Chai Tea Latte", p: "120 TL", i: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcSzlv2nHIJfw4C4R7SlkmTrQY0SUd__O6e49qLTsL-A01odhhx740cMU_q0l8c7Q0mUo3jaEcUhvJA5fCg" }
+];
+
+const grid = document.getElementById('menu-grid');
+products.forEach(p => {
+    grid.innerHTML += `
+        <div class="card">
+            <img src="${p.i}" alt="${p.n}">
+            <h3>${p.n}</h3>
+            <p class="price">${p.p}</p>
+        </div>
+    `;
+});
+</script>
+
+</body>
+</html>
