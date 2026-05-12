@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İngilizce - Türkçe Eşleştirme (50+ Kelime)</title>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --success: #48bb78;
+            --error: #f56565;
+            --bg: #f7fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        h1 { color: #2d3748; margin-top: 20px; }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            max-width: 700px;
+            width: 95%;
+            margin-top: 20px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .card:hover { border-color: var(--primary); transform: translateY(-1px); }
+        .card.selected { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .card.matched { visibility: hidden; opacity: 0; pointer-events: none; }
+        .card.wrong { background-color: var(--error); color: white; }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            height: 30px;
+            color: var(--primary);
+        }
+
+        .controls {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            z-index: 100;
+        }
+
+        button {
+            padding: 10px 25px;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button onclick="resetGame()">Oyunu Sıfırla / Yeni Kelimeler</button>
+    </div>
+    
+    <h1>Kelime Eşleştirme</h1>
+    <div id="message">Eşleşenleri bul!</div>
+
+    <div class="game-container">
+        <div class="column" id="english-col"></div>
+        <div class="column" id="turkish-col"></div>
+    </div>
+
+    <script>
+        const allWords = [
+            { en: "Apple", tr: "Elma" }, { en: "Book", tr: "Kitap" }, { en: "Sky", tr: "Gökyüzü" },
+            { en: "Computer", tr: "Bilgisayar" }, { en: "Mountain", tr: "Dağ" }, { en: "Journey", tr: "Yolculuk" },
+            { en: "Table", tr: "Masa" }, { en: "Chair", tr: "Sandalye" }, { en: "Window", tr: "Pencere" },
+            { en: "Ocean", tr: "Okyanus" }, { en: "Forest", tr: "Orman" }, { en: "Friend", tr: "Arkadaş" },
+            { en: "Summer", tr: "Yaz" }, { en: "Winter", tr: "Kış" }, { en: "Butterfly", tr: "Kelebek" },
+            { en: "Mirror", tr: "Ayna" }, { en: "Pencil", tr: "Kalem" }, { en: "Cloud", tr: "Bulut" },
+            { en: "Language", tr: "Dil" }, { en: "Bridge", tr: "Köprü" }, { en: "Market", tr: "Pazar" },
+            { en: "Kitchen", tr: "Mutfak" }, { en: "Garden", tr: "Bahçe" }, { en: "Flower", tr: "Çiçek" },
+            { en: "History", tr: "Tarih" }, { en: "Science", tr: "Bilim" }, { en: "Health", tr: "Sağlık" },
+            { en: "Wealth", tr: "Zenginlik" }, { en: "Happiness", tr: "Mutluluk" }, { en: "Shadow", tr: "Gölge" },
+            { en: "Silver", tr: "Gümüş" }, { en: "Golden", tr: "Altın" }, { en: "Island", tr: "Ada" },
+            { en: "Bridge", tr: "Köprü" }, { en: "Street", tr: "Sokak" }, { en: "Village", tr: "Köy" },
+            { en: "Feather", tr: "Tüy" }, { en: "Hammer", tr: "Çekiç" }, { en: "Candle", tr: "Mum" },
+            { en: "Bottle", tr: "Şişe" }, { en: "Gloves", tr: "Eldiven" }, { en: "Scarf", tr: "Atkı" },
+            { en: "Brave", tr: "Cesur" }, { en: "Quiet", tr: "Sessiz" }, { en: "Strong", tr: "Güçlü" },
+            { en: "Careful", tr: "Dikkatli" }, { en: "Easy", tr: "Kolay" }, { en: "Hard", tr: "Zor" },
+            { en: "Simple", tr: "Basit" }, { en: "Different", tr: "Farklı" }, { en: "Modern", tr: "Modern" },
+            { en: "Ancient", tr: "Antik" }, { en: "Famous", tr: "Ünlü" }, { en: "Useful", tr: "Faydalı" },
+            { en: "Empty", tr: "Boş" }, { en: "Heavy", tr: "Ağır" }
+        ];
+
+        let selectedEn = null;
+        let selectedTr = null;
+        let matches = 0;
+        let currentWords = [];
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function createBoard() {
+            const englishCol = document.getElementById('english-col');
+            const turkishCol = document.getElementById('turkish-col');
+            const message = document.getElementById('message');
+            
+            englishCol.innerHTML = '';
+            turkishCol.innerHTML = '';
+            message.textContent = 'Eşleşenleri bul!';
+            matches = 0;
+
+            // Her seferinde tüm kelimelerden rastgele 12 tanesini seçer (Ekranın çok uzamaması için)
+            // Eğer hepsini aynı anda görmek istersen .slice(0, 12) kısmını silebilirsin.
+            currentWords = shuffle([...allWords]).slice(0, 15);
+
+            const shuffledEn = shuffle([...currentWords]);
+            const shuffledTr = shuffle([...currentWords]);
+
+            shuffledEn.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.textContent = word.en;
+                card.onclick = () => selectCard(card, 'en', word.en);
+                englishCol.appendChild(card);
+            });
+
+            shuffledTr.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.textContent = word.tr;
+                card.onclick = () => selectCard(card, 'tr', word.tr);
+                turkishCol.appendChild(card);
+            });
+        }
+
+        function selectCard(card, type, value) {
+            if (card.classList.contains('matched')) return;
+
+            if (type === 'en') {
+                document.querySelectorAll('#english-col .card').forEach(c => c.classList.remove('selected'));
+                selectedEn = { card, value };
+            } else {
+                document.querySelectorAll('#turkish-col .card').forEach(c => c.classList.remove('selected'));
+                selectedTr = { card, value };
+            }
+
+            card.classList.add('selected');
+
+            if (selectedEn && selectedTr) {
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const pair = currentWords.find(w => w.en === selectedEn.value);
+            
+            if (pair.tr === selectedTr.value) {
+                selectedEn.card.classList.add('matched');
+                selectedTr.card.classList.add('matched');
+                matches++;
+                if (matches === currentWords.length) {
+                    document.getElementById('message').textContent = "Harika! Bu seti tamamladın. 🎉";
+                }
+            } else {
+                const enCard = selectedEn.card;
+                const trCard = selectedTr.card;
+                enCard.classList.add('wrong');
+                trCard.classList.add('wrong');
+                
+                setTimeout(() => {
+                    enCard.classList.remove('wrong', 'selected');
+                    trCard.classList.remove('wrong', 'selected');
+                }, 400);
+            }
+
+            selectedEn = null;
+            selectedTr = null;
+        }
+
+        function resetGame() {
+            createBoard();
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
